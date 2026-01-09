@@ -1,7 +1,10 @@
 package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,7 +21,7 @@ public class HotelEntity {
     @GeneratedValue(strategy =GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false ,unique = true)
     private String name;
 
     private String city;
@@ -41,5 +44,9 @@ public class HotelEntity {
 
     @Column(nullable = false)
     private Boolean isActive;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
