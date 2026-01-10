@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data // not recommended used getters and setters instead
@@ -45,7 +46,11 @@ public class HotelEntity {
     @Column(nullable = false)
     private Boolean isActive;
 
+    //owner side
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;
+
+    @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY)
+    List<RoomEntity> rooms;
 
 }

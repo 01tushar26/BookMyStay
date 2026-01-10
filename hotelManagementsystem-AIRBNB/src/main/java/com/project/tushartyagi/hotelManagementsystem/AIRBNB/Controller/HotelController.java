@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/admin/hotels")
 @Slf4j
@@ -32,5 +34,25 @@ public class HotelController {
       HotelDTO hotel = hotelService.getHotelById(id).orElseThrow(()->new  ResourceNotFoundException("No hotel found with this :"+id));
       return ResponseEntity.ok(hotel);
     }
+
+    //patch is not used in production to update many feild at a tym ...
+    @PutMapping("/{hotelId}")
+    public ResponseEntity<HotelDTO> updateHotelById(@PathVariable (name = "hotelId") Long id, @RequestBody HotelDTO updates){
+        HotelDTO h = hotelService.updateHotelById(id ,updates);
+        return ResponseEntity.ok(h);
+    }
+    //basically this api is used to activate the hotel or u can change the path to a /activate/{hotelId}
+    @PatchMapping("/{hotelId}")
+    public ResponseEntity<HotelDTO> activateHotel(@PathVariable (name = "hotelId") Long id){
+        HotelDTO h = hotelService.activateHotelById(id);
+        return ResponseEntity.ok(h);
+    }
+    @DeleteMapping("/{hotelId}")
+    public ResponseEntity<Void> deleteHotelById(@PathVariable (name = "hotelId") Long id){
+         hotelService.deleteHotelById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }
