@@ -3,17 +3,17 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.HotelEntity;
-import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceNotFoundException;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.AlreadyExistException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.HotelRepositories;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class HotelServiceImpl implements HotelService {
 
@@ -23,6 +23,11 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public HotelDTO createNewHotel(HotelDTO hotelDTO) {
         log.info("Creating a new hotel with name : {}", hotelDTO.getName());
+        Boolean isExistbyname = hotelRepo.existsByName( hotelDTO.getName());
+        if(isExistbyname == true){
+
+            throw new AlreadyExistException("Hotel with this name:"+hotelDTO.getName()+" already Exist");
+        }
         HotelEntity tobeCreatedHotel = mapper.map(hotelDTO,HotelEntity.class);
         tobeCreatedHotel.setIsActive(false);
        HotelEntity newHotel = hotelRepo.save(tobeCreatedHotel);
@@ -32,14 +37,13 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public HotelDTO getHotelById(Long id) {
+    public Optional<HotelDTO> getHotelById(Long id) {
 
         log.info("Getting hotel with id :{}",id);
 
-        HotelEntity hotel = hotelRepo.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Hotel with id :"+ id +"is not found"));
+        Optional<HotelEntity> hotel = hotelRepo.findById(id);
 
-        return mapper.map(hotel,HotelDTO.class);
+        return hotel.map(all->mapper.map(all,HotelDTO.class));
 
     }
 }

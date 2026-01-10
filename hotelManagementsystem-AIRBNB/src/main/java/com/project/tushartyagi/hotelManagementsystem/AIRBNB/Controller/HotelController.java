@@ -1,6 +1,7 @@
 package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Controller;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelDTO;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceNotFoundException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.HotelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +29,8 @@ public class HotelController {
 
     @GetMapping("/{hotelId}")
     public ResponseEntity<HotelDTO> getHotelById(@PathVariable (name = "hotelId") Long id){
-       HotelDTO hotel =  hotelService.getHotelById(id);
-       return ResponseEntity.status(HttpStatus.FOUND).body(hotel);
+      HotelDTO hotel = hotelService.getHotelById(id).orElseThrow(()->new  ResourceNotFoundException("No hotel found with this :"+id));
+      return ResponseEntity.ok(hotel);
     }
 
 }

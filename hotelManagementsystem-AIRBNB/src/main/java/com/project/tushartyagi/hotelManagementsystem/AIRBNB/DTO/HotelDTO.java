@@ -1,6 +1,7 @@
 package com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.HotelContactInfoEntity;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
@@ -22,4 +23,5 @@ public class HotelDTO {
 
     private HotelContactInfoEntity hotelContactInfo;
     private Boolean isActive;
+
 }

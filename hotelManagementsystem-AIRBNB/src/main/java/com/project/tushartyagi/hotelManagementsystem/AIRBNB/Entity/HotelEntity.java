@@ -46,7 +46,6 @@ public class HotelEntity {
     private Boolean isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private User owner;
 
 }

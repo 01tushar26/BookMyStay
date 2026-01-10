@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 @RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService {
 

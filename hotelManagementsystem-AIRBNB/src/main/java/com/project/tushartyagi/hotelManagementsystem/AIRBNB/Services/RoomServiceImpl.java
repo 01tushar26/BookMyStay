@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
