@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -81,12 +82,13 @@ public class HotelServiceImpl implements HotelService {
     public Void deleteHotelById(Long id) {
         log.info("Deleting the hotel with id : "+id);
         HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+id+ " is not found"));
+        // either use this for loop logic or use cascade simply....
 
-        for(RoomEntity room :hotel.getRooms()){
-            inventoryService.deleteAllInventory(room);
-            roomService.deleteRoomById(room.getId());
-
-        }
+//        for(RoomEntity room :hotel.getRooms()){
+//            inventoryService.deleteAllInventory(room);
+//            roomService.deleteRoomById(room.getId());
+//
+//        }
 
         hotelRepo.deleteById(id);
 

@@ -11,8 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Data // not recommended used getters and setters instead
+@Entity // not recommended used getters and setters instead
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -50,7 +49,12 @@ public class HotelEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User owner;
 
-    @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY)
+    //inverse side
+    @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     List<RoomEntity> rooms;
+
+    @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    List<Inventory> inventories;
+
 
 }

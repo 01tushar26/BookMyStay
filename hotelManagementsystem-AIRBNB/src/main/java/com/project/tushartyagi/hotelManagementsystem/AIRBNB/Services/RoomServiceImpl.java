@@ -72,7 +72,7 @@ public class RoomServiceImpl implements RoomService {
         log.info("Deleting a room with id : "+id);
         RoomEntity room = roomRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Room is not found with this id : "+id));
 
-
+        // either used this to maintain db consistency or use cascade simply
         inventoryService.deleteAllInventory(room);
         roomRepo.deleteById(id);
         return null;
