@@ -2,11 +2,14 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services;
 
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelDTO;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelInfo;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.RoomDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.HotelEntity;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.RoomEntity;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.AlreadyExistException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceNotFoundException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.HotelRepositories;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.RoomRepositories;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +18,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class HotelServiceImpl implements HotelService {
+    private final RoomRepositories roomRepositories;
 
     private final HotelRepositories hotelRepo;
     private final InventoryService inventoryService;
@@ -110,5 +115,20 @@ public class HotelServiceImpl implements HotelService {
         }
 
         return mapper.map(hotel,HotelDTO.class);
+    }
+
+    @Override
+    public HotelInfo getHotelInfoById(Long id) {
+        HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+id+ " is not found"));
+        List<RoomEntity> rooms = hotel.getRooms();
+        if(rooms.isEmpty()){
+            throw new ResourceNotFoundException("There is no  room in this hotel ");
+        }
+        List<RoomDTO> roomDTOs = rooms.stream()
+                .map(room -> mapper.map(room, RoomDTO.class))
+                .toList();
+        return new HotelInfo(mapper.map(hotel,HotelDTO.class),roomDTOs);
+
+
     }
 }

@@ -1,6 +1,7 @@
 package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelDTO;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelInfo;
 
 import java.util.Map;
 import java.util.Optional;
@@ -15,4 +16,6 @@ public interface HotelService {
     Void deleteHotelById(Long id);
 
     HotelDTO activateHotelById(Long id);
+
+    HotelInfo getHotelInfoById(Long id);
 }
