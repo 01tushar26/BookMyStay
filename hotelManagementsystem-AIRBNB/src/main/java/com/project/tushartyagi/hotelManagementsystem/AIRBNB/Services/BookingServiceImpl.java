@@ -8,7 +8,6 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.boot.jaxb.SourceType;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -117,6 +116,7 @@ public class BookingServiceImpl implements BookingService{
     }
 
     public Boolean hasBookingExpired(Booking booking){
+        log.info("Checking whether booking is expired or not");
         return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
     }
 
