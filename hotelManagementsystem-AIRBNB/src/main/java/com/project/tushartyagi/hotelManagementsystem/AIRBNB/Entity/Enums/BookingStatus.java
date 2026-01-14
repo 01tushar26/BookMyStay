@@ -2,6 +2,9 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums;
 
 public enum BookingStatus {
     RESERVED,
-    PENDING,
-    CONFIRMED
+    GUESTS_ADDED,
+    PAYMENTS_PENDING,
+    CONFIRMED,
+    CANCELLED,
+    EXPIRED
 }
