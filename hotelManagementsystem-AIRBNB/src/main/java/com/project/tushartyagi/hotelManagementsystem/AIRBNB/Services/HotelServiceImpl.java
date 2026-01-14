@@ -109,7 +109,7 @@ public class HotelServiceImpl implements HotelService {
         hotelRepo.save(hotel);
 
         log.info("Rooms count: {}", hotel.getRooms().size());
-        // remember to add the @Transactional when you call two db service at a tym
+        // remember to add the @Transactional when yopu call two db service at a tym
         for(RoomEntity room :hotel.getRooms()){
             inventoryService.initializeRoomForAYear(room);
         }
@@ -118,9 +118,7 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    @Transactional
     public HotelInfo getHotelInfoById(Long id) {
-        log.info("Getting hotel info having id : {}",id);
         HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+id+ " is not found"));
         List<RoomEntity> rooms = hotel.getRooms();
         if(rooms.isEmpty()){

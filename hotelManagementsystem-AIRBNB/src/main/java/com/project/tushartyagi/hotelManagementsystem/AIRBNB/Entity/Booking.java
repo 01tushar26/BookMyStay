@@ -3,11 +3,11 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.BookingStatus;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.PaymentStatus;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,9 +16,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class Booking {
 
     @Id
@@ -53,15 +50,17 @@ public class Booking {
     @UpdateTimestamp
     private LocalDateTime updateAt;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status;
 
-    @Column(nullable = false,scale = 2,precision = 10)
-    private BigDecimal price;
 
     //owning side
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable(
             //this is how we define our own namimng in new table(otherwise jpa did it by their own
             name = "booking_guest",
@@ -69,9 +68,5 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name="guest_id")
     )
     private Set<Guest> guest;
-
-    //inverse side
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Payment payment;
 
 }

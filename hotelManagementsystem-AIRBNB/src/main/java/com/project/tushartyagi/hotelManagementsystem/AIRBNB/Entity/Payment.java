@@ -37,10 +37,6 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "booking_id",nullable = false)
-    private Booking booking;
-
 
 
 

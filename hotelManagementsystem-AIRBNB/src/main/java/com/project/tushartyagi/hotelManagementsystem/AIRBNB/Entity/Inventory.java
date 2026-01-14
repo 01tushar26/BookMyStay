@@ -43,9 +43,6 @@ public class Inventory {
     @Column(nullable = false , columnDefinition = "INTEGER DEFAULT 0")
     private Integer bookedCount;
 
-    @Column(nullable = false , columnDefinition = "INTEGER DEFAULT 0")
-    private Integer reservedCount;
-
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
