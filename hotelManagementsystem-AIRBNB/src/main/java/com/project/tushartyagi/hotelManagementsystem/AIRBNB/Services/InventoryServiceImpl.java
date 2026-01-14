@@ -30,6 +30,8 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void initializeRoomForAYear(RoomEntity room) {
+
+        log.info("Creating a inventories for room with id {}",room.getId());
         LocalDate today = LocalDate.now();
         LocalDate endDate =today.plusYears(1);
         for(; !today.isAfter(endDate);today=today.plusDays(1)){
@@ -51,15 +53,17 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void deleteAllInventory(RoomEntity room) {
+        log.info("Deleting all inventories for the room with id {}",room.getId());
         inventoryRepo.deleteByRoom(room);
     }
 
     @Override
     public Page<HotelDTO> searchHotels(HotelSearchRequest hotelSearchRequest) {
+        log.info("Searching hotels for {} city, from {} to {}",hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
         Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize());
-        Long roomCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate()) +1;
+        Long dayCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate()) +1;
         Page<HotelEntity> hotels = inventoryRepo.findHotelByAvailableInventory(hotelSearchRequest.getStartDate(),
-                hotelSearchRequest.getEndDate(),hotelSearchRequest.getCity(),hotelSearchRequest.getRoomCount(),roomCount,pageable
+                hotelSearchRequest.getEndDate(),hotelSearchRequest.getCity(),hotelSearchRequest.getRoomCount(),dayCount,pageable
                                                 );
 
         // can skip this if part because if data is null or not found then page return empty page.....

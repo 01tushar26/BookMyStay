@@ -30,7 +30,7 @@ public class User {
 
     private String name;
 
-    //this will create a new table(name is app_user_roles that store user id and there roles only
+    //this will create a new table(name is app_user_roles that store user id and there roles only)
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Roles> roles;
