@@ -41,10 +41,10 @@ public class Inventory {
     private Integer totalCount;
 
     @Column(nullable = false , columnDefinition = "INTEGER DEFAULT 0")
-    private Integer bookedCount;
+    private Integer bookedCount=0;
 
     @Column(nullable = false , columnDefinition = "INTEGER DEFAULT 0")
-    private Integer reservedCount;
+    private Integer reservedCount=0;
 
     @CreationTimestamp
     @Column(updatable = false)

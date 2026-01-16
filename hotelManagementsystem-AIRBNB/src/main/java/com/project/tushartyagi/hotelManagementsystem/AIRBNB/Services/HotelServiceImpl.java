@@ -123,9 +123,9 @@ public class HotelServiceImpl implements HotelService {
         log.info("Getting hotel info having id : {}",id);
         HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+id+ " is not found"));
         List<RoomEntity> rooms = hotel.getRooms();
-        if(rooms.isEmpty()){
-            throw new ResourceNotFoundException("There is no  room in this hotel ");
-        }
+//        if(rooms.isEmpty()){
+//            throw new ResourceNotFoundException("There is no room in this hotel ");
+//        }
         List<RoomDTO> roomDTOs = rooms.stream()
                 .map(room -> mapper.map(room, RoomDTO.class))
                 .toList();

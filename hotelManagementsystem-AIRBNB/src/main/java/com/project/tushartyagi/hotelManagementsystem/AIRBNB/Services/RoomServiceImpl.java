@@ -28,7 +28,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional
-    public RoomDTO createNewRoom(Long hotelId,RoomDTO roomDTO) {
+    public RoomDTO createNewRoom(Long hotelId, RoomDTO roomDTO) {
         log.info("Creating a room in a hotel with id : "+hotelId);
         HotelEntity hotel = hotelRepo.findById(hotelId).
                 orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+hotelId+ " is not found"));

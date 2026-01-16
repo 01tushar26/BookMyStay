@@ -1,5 +1,6 @@
 package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -50,9 +51,11 @@ public class HotelEntity {
     private User owner;
 
     //inverse side
+    @JsonIgnore
     @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     List<RoomEntity> rooms;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     List<Inventory> inventories;
 

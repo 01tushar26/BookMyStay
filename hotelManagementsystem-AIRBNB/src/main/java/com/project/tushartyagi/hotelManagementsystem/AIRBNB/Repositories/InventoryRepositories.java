@@ -30,11 +30,6 @@ public interface InventoryRepositories extends JpaRepository<Inventory,Long> {
                   AND (i.totalCount - i.bookedCount-i.reservedCount) >= :roomCount
                 GROUP BY i.hotel, i.room
                 HAVING COUNT(i.date) = :dayCount
-                   
-            
-            
-            
-            
             """)
     Page<HotelEntity> findHotelByAvailableInventory(
             @Param("startDate")LocalDate startDate,
@@ -63,4 +58,5 @@ public interface InventoryRepositories extends JpaRepository<Inventory,Long> {
             @Param("roomId") Long roomId
     );
 
+    List<Inventory> findByHotelAndDateBetween(HotelEntity hotelEntity, LocalDate startDate, LocalDate endDate);
 }
