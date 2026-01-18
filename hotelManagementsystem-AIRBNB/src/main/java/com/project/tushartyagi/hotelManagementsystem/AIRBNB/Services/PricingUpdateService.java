@@ -42,8 +42,8 @@ public class PricingUpdateService {
 
 
 
-    // this cron is for one hrs
-    @Scheduled(cron = "*/5 * * * * *")
+    // this cron is for one hr
+    @Scheduled(cron = "0 0 * * * *")
     public void updatePrice(){
         int page =0;
         int batchSize =100;
