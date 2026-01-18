@@ -1,6 +1,6 @@
 package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Advice;
 
-import org.jspecify.annotations.Nullable;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -20,7 +20,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
     }
 
     @Override
-    public @Nullable Object beforeBodyWrite( Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+    public Object beforeBodyWrite( Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         if(body  instanceof ApiResponse){
             return body;
         }
