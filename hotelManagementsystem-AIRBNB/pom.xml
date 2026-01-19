@@ -57,6 +57,38 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+<!--		Dependies to be add to use jwt-->
+		<!--This provides the core API for generating, parsing, and validating JWTs.
+//It contains all the interfaces and classes necessary for creating and managing JWTs. -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.12.6</version>
+		</dependency>
+
+		<!--This dependency provides the implementation of the JWT functionality specified by the jjwt-api.
+//It's marked as runtime, meaning it is only required at runtime and not during compilation.-->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--This provides support for JSON serialization and deserialization using Jackson.
+//It allows JWT payloads to be serialized into JSON and deserialized back into Java objects.-->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.12.6</version>
+			<scope>runtime</scope>
+		</dependency>
+
+
+		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.7.0</version>
