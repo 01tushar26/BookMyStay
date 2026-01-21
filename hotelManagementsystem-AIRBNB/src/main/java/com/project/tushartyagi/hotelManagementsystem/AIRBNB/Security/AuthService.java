@@ -34,4 +34,5 @@ public class AuthService {
         return mapper.map(newUser,UserDTO.class);
 
     }
+
 }
