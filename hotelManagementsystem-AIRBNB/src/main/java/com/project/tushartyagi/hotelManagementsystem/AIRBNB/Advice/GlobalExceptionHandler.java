@@ -59,6 +59,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleJwtException(JwtException ex) {
         ApiError apiError = ApiError.builder()
                 .status(HttpStatus.UNAUTHORIZED)
+                .timestamp(Timestamp.valueOf(LocalDateTime.now()))
                 .message(ex.getMessage())
                 .build();
         ApiResponse<?> res = ApiResponse.builder().error(apiError).time(LocalDateTime.now()).build();
@@ -70,6 +71,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<?>> handleAccessDeniedException(AccessDeniedException ex) {
         ApiError apiError = ApiError.builder()
                 .status(HttpStatus.FORBIDDEN)
+                .timestamp(Timestamp.valueOf(LocalDateTime.now()))
                 .message(ex.getMessage())
                 .build();
         ApiResponse<?> res = ApiResponse.builder().error(apiError).time(LocalDateTime.now()).build();

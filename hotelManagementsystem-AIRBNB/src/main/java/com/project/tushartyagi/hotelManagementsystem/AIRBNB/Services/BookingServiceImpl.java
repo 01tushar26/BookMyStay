@@ -4,17 +4,20 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.*;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.*;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.BookingStatus;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceNotFoundException;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.UNauthorisedException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -60,7 +63,7 @@ public class BookingServiceImpl implements BookingService{
 
 
 
-        //TODO : add dynamic pricing strategy
+
 
         Booking booking =Booking.builder()
                 .hotel(hotel)
@@ -89,6 +92,10 @@ public class BookingServiceImpl implements BookingService{
                         id)
                 .orElseThrow(
                         ()->new ResourceNotFoundException("No booking is available with id :"+id));
+        User user = getCurrentUser();
+        if(!user.equals(booking.getUser())){
+            throw new UNauthorisedException("this booking is not belong to current user");
+        }
 
         if(hasBookingExpired(booking)){
             throw new IllegalStateException("Booking has been expired");
@@ -121,11 +128,8 @@ public class BookingServiceImpl implements BookingService{
     }
 
     public User  getCurrentUser(){
-        //TODO : remove this dummy user
-        User user = new User();
 
-        user.setId(1L);
-        return user;
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

@@ -47,7 +47,7 @@ public class HotelEntity {
     private Boolean isActive;
 
     //owner side
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     private User owner;
 
     //inverse side

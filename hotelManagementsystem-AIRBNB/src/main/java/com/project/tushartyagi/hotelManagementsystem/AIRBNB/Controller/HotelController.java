@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -31,7 +32,12 @@ public class HotelController {
 
     @GetMapping("/{hotelId}")
     public ResponseEntity<HotelDTO> getHotelById(@PathVariable (name = "hotelId") Long id){
-      HotelDTO hotel = hotelService.getHotelById(id).orElseThrow(()->new  ResourceNotFoundException("No hotel found with this :"+id));
+      HotelDTO hotel = hotelService.getHotelById(id);
+      return ResponseEntity.ok(hotel);
+    }
+    @GetMapping()
+    public ResponseEntity<List<HotelDTO>> getAllTheHotels(){
+      List<HotelDTO> hotel = hotelService.getAllTheHotel();
       return ResponseEntity.ok(hotel);
     }
 
