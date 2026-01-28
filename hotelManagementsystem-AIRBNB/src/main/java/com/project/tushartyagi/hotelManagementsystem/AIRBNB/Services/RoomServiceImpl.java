@@ -37,7 +37,7 @@ public class RoomServiceImpl implements RoomService {
                 orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+hotelId+ " is not found"));
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(!user.equals(hotel.getOwner())){
+        if(!user.getId().equals(hotel.getOwner().getId())){
             throw new UNauthorisedException("This user does not own this hotel with id: "+hotelId+"So cannot able to create the room in this hotel");
         }
         RoomEntity room = mapper.map(roomDTO,RoomEntity.class);
@@ -93,7 +93,7 @@ public class RoomServiceImpl implements RoomService {
         HotelEntity hotel = room.getHotel();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(!user.equals(hotel.getOwner())){
+        if(!user.getId().equals(hotel.getOwner().getId())){
             throw new UNauthorisedException("This user does not own this room with id: "+id);
         }
 

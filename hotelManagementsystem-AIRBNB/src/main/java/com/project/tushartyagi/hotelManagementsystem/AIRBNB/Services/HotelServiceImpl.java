@@ -60,7 +60,7 @@ public class HotelServiceImpl implements HotelService {
         HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id :"+id+"is not found"));
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(!user.equals(hotel.getOwner())){
+        if(!user.getId().equals(hotel.getOwner().getId())){
              throw new UNauthorisedException("This user does not own this hotel with id: "+id);
         }
         return mapper.map(hotel,HotelDTO.class);
@@ -73,7 +73,7 @@ public class HotelServiceImpl implements HotelService {
         HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+id+ " is not found"));
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(!user.equals(hotel.getOwner())){
+        if(!user.getId().equals(hotel.getOwner().getId())){
             throw new UNauthorisedException("This user does not own this hotel with id: "+id);
         }
         mapper.map(hotelDTO,hotel);
@@ -103,7 +103,7 @@ public class HotelServiceImpl implements HotelService {
         HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+id+ " is not found"));
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(!user.equals(hotel.getOwner())){
+        if(!user.getId().equals(hotel.getOwner().getId())){
             throw new UNauthorisedException("This user does not own this hotel with id: "+id);
         }
         // either use this for loop logic or use cascade simply....
@@ -126,7 +126,7 @@ public class HotelServiceImpl implements HotelService {
         HotelEntity hotel = hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+id+ " is not found"));
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(!user.equals(hotel.getOwner())){
+        if(!user.getId().equals(hotel.getOwner().getId())){
             throw new UNauthorisedException("This user does not own this hotel with id: "+id);
         }
         hotel.setIsActive(true);

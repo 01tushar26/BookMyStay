@@ -6,10 +6,12 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.Booking
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceNotFoundException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.UNauthorisedException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.*;
+import com.stripe.model.Event;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +27,15 @@ import java.util.Objects;
 public class BookingServiceImpl implements BookingService{
     private final GuestRepository guestRepository;
     private final BookingRepository bookRepo;
-     private final HotelRepositories hotelRepo;
-     private final RoomRepositories roomRepo;
-     private final InventoryRepositories inventoryRepo;
-     private final ModelMapper mapper;
+    private final HotelRepositories hotelRepo;
+    private final RoomRepositories roomRepo;
+    private final InventoryRepositories inventoryRepo;
+    private final ModelMapper mapper;
+    private final CheckOutService checkOutService;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
 
     @Override
     @Transactional
@@ -59,7 +66,7 @@ public class BookingServiceImpl implements BookingService{
 
         inventoryRepo.saveAll(inventoryList);
 
-        // create booking
+
 
 
 
@@ -72,7 +79,7 @@ public class BookingServiceImpl implements BookingService{
                 .checkOutDate(bookingRequest.getCheckOutDate())
                 .roomCount(bookingRequest.getRoomCount())
                 .status(BookingStatus.RESERVED)
-                .price(BigDecimal.TEN)
+                .price(BigDecimal.valueOf(1000L))
                 .user(getCurrentUser())
                 .build();
         bookRepo.save(booking);
@@ -93,7 +100,7 @@ public class BookingServiceImpl implements BookingService{
                 .orElseThrow(
                         ()->new ResourceNotFoundException("No booking is available with id :"+id));
         User user = getCurrentUser();
-        if(!user.equals(booking.getUser())){
+        if(!user.getId().equals(booking.getUser().getId())){
             throw new UNauthorisedException("this booking is not belong to current user");
         }
 
@@ -126,14 +133,26 @@ public class BookingServiceImpl implements BookingService{
     public String initiatePayments(Long id) {
         User user = getCurrentUser();
         Booking booking = bookRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("No booking exist with id :"+id));
-       if(!user.equals(booking.getUser())){
+       if(!user.getId().equals(booking.getUser().getId())){
            throw new UNauthorisedException("User with id "+user.getId()+" is not owned this booking with id"+id);
        }
-       if(hasBookingExpired(booking)){
-           throw new IllegalStateException("Booking has been expired");
+//       if(hasBookingExpired(booking)){
+//           throw new IllegalStateException("Booking has been expired");
+//       }
+       if(booking.getStatus() != BookingStatus.GUESTS_ADDED){
+           throw new RuntimeException("Firstly add the guest");
        }
+      String url = checkOutService.getCheckoutSession(frontendUrl+"/payment/success",frontendUrl+"/payment/failure",booking);
+       booking.setStatus(BookingStatus.PAYMENTS_PENDING);
+       bookRepo.save(booking);
 
-        return "";
+
+        return url;
+    }
+
+    @Override
+    public void capturePayment(Event event) {
+
     }
 
     public Boolean hasBookingExpired(Booking booking){
