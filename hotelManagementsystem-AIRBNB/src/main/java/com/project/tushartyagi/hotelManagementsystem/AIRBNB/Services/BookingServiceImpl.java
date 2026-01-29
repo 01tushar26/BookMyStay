@@ -6,7 +6,12 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.Booking
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceNotFoundException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.UNauthorisedException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.*;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Strategy.PricingService;
+import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
+import com.stripe.model.Refund;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.RefundCreateParams;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +37,8 @@ public class BookingServiceImpl implements BookingService{
     private final InventoryRepositories inventoryRepo;
     private final ModelMapper mapper;
     private final CheckOutService checkOutService;
+    private final PricingService pricingService;
+
 
     @Value("${frontend.url}")
     private String frontendUrl;
@@ -58,15 +65,21 @@ public class BookingServiceImpl implements BookingService{
             throw new IllegalStateException("No rooms Available anymore");
         }
 
-        for(Inventory inventory:inventoryList){
-//            System.out.println(inventory.getHotel().getId());
-//            System.out.println(inventory.getRoom().getId());
-            inventory.setReservedCount(inventory.getReservedCount()+ bookingRequest.getRoomCount());
-        }
+        inventoryRepo.initBooking(room.getId(), bookingRequest.getCheckInDate(),
+                bookingRequest.getCheckOutDate(), bookingRequest.getRoomCount());
 
-        inventoryRepo.saveAll(inventoryList);
+//        // this is logic of getting the dynamic price of inventory using our pricing service
+//        BigDecimal priceForOneRoom = pricingService.calculateTotalPrice(inventoryList);
+        //also get price directly form the inventory because u update the pricethere uisng crom job
+        BigDecimal priceForOneRoom = inventoryList.stream()
+                .map(Inventory::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
 
+
+
+
+        BigDecimal totalPrice = priceForOneRoom.multiply(BigDecimal.valueOf(bookingRequest.getRoomCount()));
 
 
 
@@ -79,7 +92,7 @@ public class BookingServiceImpl implements BookingService{
                 .checkOutDate(bookingRequest.getCheckOutDate())
                 .roomCount(bookingRequest.getRoomCount())
                 .status(BookingStatus.RESERVED)
-                .price(BigDecimal.valueOf(1000L))
+                .price(totalPrice)
                 .user(getCurrentUser())
                 .build();
         bookRepo.save(booking);
@@ -114,7 +127,7 @@ public class BookingServiceImpl implements BookingService{
 
        for(GuestDTO guestDTO:guests){
 
-           guestDTO.setUser(getCurrentUser());
+           guestDTO.setUser(mapper.map(getCurrentUser(),UserDTO.class));
 
          Guest guestEntity = mapper.map(guestDTO,Guest.class);
          guestRepository.save(guestEntity);
@@ -130,6 +143,7 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    @Transactional
     public String initiatePayments(Long id) {
         User user = getCurrentUser();
         Booking booking = bookRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("No booking exist with id :"+id));
@@ -140,7 +154,7 @@ public class BookingServiceImpl implements BookingService{
 //           throw new IllegalStateException("Booking has been expired");
 //       }
        if(booking.getStatus() != BookingStatus.GUESTS_ADDED){
-           throw new RuntimeException("Firstly add the guest");
+           throw new IllegalStateException("Firstly add the guest");
        }
       String url = checkOutService.getCheckoutSession(frontendUrl+"/payment/success",frontendUrl+"/payment/failure",booking);
        booking.setStatus(BookingStatus.PAYMENTS_PENDING);
@@ -151,8 +165,70 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    @Transactional
     public void capturePayment(Event event) {
 
+        if ("checkout.session.completed".equals(event.getType())) {
+            Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
+            if (session == null) return;
+            String sessionId = session.getId();
+
+
+            Booking booking =
+                    bookRepo.findByPaymentSessionId(sessionId).orElseThrow(() ->
+                            new ResourceNotFoundException("Booking not found for session ID: "+sessionId));
+            if (booking.getStatus() == BookingStatus.CONFIRMED) {
+                log.info("Booking already confirmed");
+                return;
+            }
+            booking.setStatus(BookingStatus.CONFIRMED);
+            bookRepo.save(booking);
+
+            inventoryRepo.findAndLockReservedInventory(booking.getRoom().getId(), booking.getCheckInDate(),
+                    booking.getCheckOutDate(), booking.getRoomCount());
+
+            inventoryRepo.confirmBooking(booking.getRoom().getId(), booking.getCheckInDate(),
+                    booking.getCheckOutDate(), booking.getRoomCount());
+
+            log.info("Successfully confirmed the booking for Booking ID: {}", booking.getId());
+        } else {
+            log.warn("Unhandled event type: {}", event.getType());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void cancelBooking(Long id) {
+        User user = getCurrentUser();
+        Booking booking = bookRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("No booking exist with id :"+id));
+        // u compare the id not the user directly becuause u did not write the equal overrides method in user entitywithout that user from db is diff from the user from context holder
+        if(!user.getId().equals(booking.getUser().getId())){
+            throw new UNauthorisedException("User with id "+user.getId()+" is not owned this booking with id"+id);
+        }
+        if(booking.getStatus() != BookingStatus.CONFIRMED){
+            throw new  IllegalStateException("Only confirmed Booking get cancelled");
+        }
+        booking.setStatus(BookingStatus.CANCELLED);
+        bookRepo.save(booking);
+
+        inventoryRepo.findAndLockReservedInventory(booking.getRoom().getId(), booking.getCheckInDate(),
+                booking.getCheckOutDate(), booking.getRoomCount());
+
+        inventoryRepo.cancelBooking(booking.getRoom().getId(), booking.getCheckInDate(),
+                booking.getCheckOutDate(), booking.getRoomCount());
+
+        //Refund Logic
+
+        try {
+            Session session = Session.retrieve(booking.getPaymentSessionId());
+            RefundCreateParams refundParams = RefundCreateParams.builder()
+                    .setPaymentIntent(session.getPaymentIntent())
+                    .build();
+            // this will automaticatically refund the booking
+            Refund.create(refundParams);
+        } catch (StripeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Boolean hasBookingExpired(Booking booking){
@@ -161,7 +237,6 @@ public class BookingServiceImpl implements BookingService{
     }
 
     public User  getCurrentUser(){
-
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 

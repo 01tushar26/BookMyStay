@@ -47,6 +47,7 @@ public class HotelEntity {
     private Boolean isActive;
 
     //owner side
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     private User owner;
 

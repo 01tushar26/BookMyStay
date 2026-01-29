@@ -1,8 +1,6 @@
 package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Booking;
-import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.PaymentStatus;
-import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Payment;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.User;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.BookingRepository;
 import com.stripe.exception.StripeException;
@@ -22,7 +20,6 @@ import java.math.BigDecimal;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-
 public class CheckOutServiceImpl implements CheckOutService{
 
  private final BookingRepository bookingRepository;
@@ -69,13 +66,7 @@ public class CheckOutServiceImpl implements CheckOutService{
                     .build();
 
             Session session = Session.create(params);
-             Payment payment = Payment.builder()
-                     .transactionId(session.getId())
-                     .price(booking.getPrice())
-                     .status(PaymentStatus.PENDING)
-                     .build()
-                     ;
-             payment.setBooking(booking);
+             booking.setPaymentSessionId(session.getId());
              bookingRepository.save(booking);
             log.info("Session Created successfully for booking with id {}",booking.getId());
              return session.getUrl();

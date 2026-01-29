@@ -12,7 +12,7 @@ import java.util.Set;
 public class GuestDTO {
 
     private Long id;
-    private User user;
+    private UserDTO user;
     private Gender gender;
     private String name;
     private Integer age;

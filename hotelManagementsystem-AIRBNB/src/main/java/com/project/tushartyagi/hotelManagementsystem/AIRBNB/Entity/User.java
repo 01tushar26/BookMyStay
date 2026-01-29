@@ -54,4 +54,6 @@ public class User implements UserDetails {
         // because email is unique
         return email;
     }
+
+    // u can also override the equals() method here which mean the object of user == user from security context holder
 }

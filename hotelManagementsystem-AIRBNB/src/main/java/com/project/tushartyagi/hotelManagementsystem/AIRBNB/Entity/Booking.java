@@ -63,17 +63,15 @@ public class Booking {
     //owning side
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            //this is how we define our own namimng in new table(otherwise jpa did it by their own
+            //this is how we define our own naming in new table(otherwise jpa did it by their own
             name = "booking_guest",
             joinColumns = @JoinColumn( name="booking_id"),
             inverseJoinColumns = @JoinColumn(name="guest_id")
     )
     private Set<Guest> guest;
 
-    //inverse side
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Payment payment;
 
-
+    @Column(unique = true)
+    private String paymentSessionId;
 
 }

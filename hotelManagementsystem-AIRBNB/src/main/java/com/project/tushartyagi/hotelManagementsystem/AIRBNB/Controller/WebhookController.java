@@ -23,7 +23,7 @@ public class WebhookController {
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
 
-    @PostMapping("payment")
+    @PostMapping("/payment")
     public ResponseEntity<Void> capturePayments(@RequestBody String payload, @RequestHeader("Stripe-Signature")String sigHeader){
      try{
          Event event = Webhook.constructEvent(payload,sigHeader,endpointSecret);

@@ -18,7 +18,6 @@ public class Guest {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
-
     private User user;
 
     @Enumerated(EnumType.STRING)
