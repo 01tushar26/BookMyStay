@@ -160,6 +160,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public List<HotelDTO> getAllTheHotel() {
+        log.info("Getting all the hotels owned by this user");
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<HotelEntity> hotels = hotelRepo.findByOwner(user);
 

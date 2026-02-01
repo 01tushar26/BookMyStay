@@ -17,14 +17,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -114,7 +117,7 @@ public class BookingServiceImpl implements BookingService{
                         ()->new ResourceNotFoundException("No booking is available with id :"+id));
         User user = getCurrentUser();
         if(!user.getId().equals(booking.getUser().getId())){
-            throw new UNauthorisedException("this booking is not belong to current user");
+            throw new AccessDeniedException("this booking is not belong to current user");
         }
 
         if(hasBookingExpired(booking)){
@@ -148,13 +151,13 @@ public class BookingServiceImpl implements BookingService{
         User user = getCurrentUser();
         Booking booking = bookRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("No booking exist with id :"+id));
        if(!user.getId().equals(booking.getUser().getId())){
-           throw new UNauthorisedException("User with id "+user.getId()+" is not owned this booking with id"+id);
+           throw new AccessDeniedException("User with id "+user.getId()+" is not owned this booking with id"+id);
        }
 //       if(hasBookingExpired(booking)){
 //           throw new IllegalStateException("Booking has been expired");
 //       }
        if(booking.getStatus() != BookingStatus.GUESTS_ADDED){
-           throw new IllegalStateException("Firstly add the guest");
+           throw new UNauthorisedException("Firstly add the guest");
        }
       String url = checkOutService.getCheckoutSession(frontendUrl+"/payment/success",frontendUrl+"/payment/failure",booking);
        booking.setStatus(BookingStatus.PAYMENTS_PENDING);
@@ -203,7 +206,7 @@ public class BookingServiceImpl implements BookingService{
         Booking booking = bookRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("No booking exist with id :"+id));
         // u compare the id not the user directly becuause u did not write the equal overrides method in user entitywithout that user from db is diff from the user from context holder
         if(!user.getId().equals(booking.getUser().getId())){
-            throw new UNauthorisedException("User with id "+user.getId()+" is not owned this booking with id"+id);
+            throw new AccessDeniedException("User with id "+user.getId()+" is not owned this booking with id"+id);
         }
         if(booking.getStatus() != BookingStatus.CONFIRMED){
             throw new  IllegalStateException("Only confirmed Booking get cancelled");
@@ -224,11 +227,58 @@ public class BookingServiceImpl implements BookingService{
             RefundCreateParams refundParams = RefundCreateParams.builder()
                     .setPaymentIntent(session.getPaymentIntent())
                     .build();
-            // this will automaticatically refund the booking
+            // this will automatically refund the booking
             Refund.create(refundParams);
         } catch (StripeException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<BookingDTO> getAllTheBookingOfParticularHotel(Long id){
+        HotelEntity hotel= hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel not found with id :"+id));
+        User user = getCurrentUser();
+
+        log.info("Getting all the booking of hotel with id {}",id);
+
+        if(user.getId() != hotel.getOwner().getId()){
+            throw new AccessDeniedException("User does not owned this hotel with id :"+id);
+        }
+        List<Booking> bookingList= bookRepo.findByHotel(hotel);
+
+        return bookingList
+                .stream()
+                .map(all->mapper.map(all,BookingDTO.class))
+                .collect(Collectors.toList());
+
+
+    }
+
+    @Override
+    public HotelReportDTO getHotelReport(Long id, LocalDate startDate, LocalDate endDate) {
+        HotelEntity hotel= hotelRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Hotel not found with id "+id));
+        User user = getCurrentUser();
+
+        log.info("Generating report for hotel with id {} from {} to {}",id,startDate,endDate);
+
+        if(user.getId() != hotel.getOwner().getId()){
+            throw new AccessDeniedException("User does not owned this hotel with id :"+id);
+        }
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Booking> bookingList= bookRepo.findByHotelAndCreatedAtBetween(hotel,startDateTime,endDateTime);
+
+        Long bookingCount= bookingList.stream()
+                .filter(all->all.getStatus()==BookingStatus.CONFIRMED)
+                .count();
+        BigDecimal revenue = bookingList.stream()
+                .filter(all->all.getStatus()==BookingStatus.CONFIRMED)
+                .map(Booking::getPrice)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+
+        BigDecimal avgRevenue = bookingCount==0 ? BigDecimal.ZERO : revenue.divide(BigDecimal.valueOf(bookingCount));
+
+        return new HotelReportDTO(bookingCount,revenue,avgRevenue);
     }
 
     public Boolean hasBookingExpired(Booking booking){

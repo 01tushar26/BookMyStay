@@ -12,5 +12,6 @@ import java.util.List;
 public interface HotelRepositories extends JpaRepository<HotelEntity,Long> {
 
     Boolean existsByName(String name);
+
     List<HotelEntity> findByOwner(User owner);
 }

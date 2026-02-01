@@ -2,7 +2,6 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -59,6 +58,7 @@ public class HotelEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     List<Inventory> inventories;
+
 
 
 }

@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -101,5 +102,28 @@ public class RoomServiceImpl implements RoomService {
         inventoryService.deleteAllInventory(room);
         roomRepo.deleteById(id);
         return null;
+    }
+
+    @Override
+    @Transactional
+    public RoomDTO updateRoomById(Long roomId, Long hotelId, RoomDTO roomDTO) {
+        log.info("Updating a room with id :{}",roomId);
+        HotelEntity hotel = hotelRepo.findById(hotelId).orElseThrow(()->new ResourceNotFoundException("Hotel with id : "+hotelId+ " is not found"));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if(!user.getId().equals(hotel.getOwner().getId())){
+            throw new AccessDeniedException("This user does not own this hotel with id: "+hotelId);
+        }
+        RoomEntity room = roomRepo.findById(roomId).orElseThrow(()->new ResourceNotFoundException("Room not found with id :"+roomId));
+        if(room.getHotel().getOwner().getId() != user.getId()){
+            throw new AccessDeniedException("This user does not own this hotel with id: "+hotelId);
+        }
+        mapper.map(roomDTO,room);
+
+        room.setId(roomId);
+        room = roomRepo.save(room);
+        //TODO - what if the room price or inventory is change
+
+        return mapper.map(room,RoomDTO.class);
     }
 }
