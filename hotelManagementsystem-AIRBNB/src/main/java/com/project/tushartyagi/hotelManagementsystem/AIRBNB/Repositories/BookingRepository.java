@@ -2,6 +2,7 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Booking;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.HotelEntity;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +19,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
 
     List<Booking> findByHotelAndCreatedAtBetween(HotelEntity hotel, LocalDateTime startDateTime, LocalDateTime endDateTime);
+
+    List<Booking> findByUser(User user);
 }

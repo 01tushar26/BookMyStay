@@ -6,6 +6,7 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Holidays;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.HolidaysRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -22,6 +23,9 @@ public class HolidayResponseImplementation  implements HolidayResponse{
 
     private final HolidaysRepository holidaysRepo;
     private final RestClient restClient;
+
+   @Value("${apiKey}")
+    private String apiKey;
 
     @Override
     public void loadHolidays(int year) {
@@ -40,7 +44,7 @@ public class HolidayResponseImplementation  implements HolidayResponse{
                 .get()
                 .uri(uriBuilder -> uriBuilder
                 .path("/holidays")
-                .queryParam("api_key", "a0x8z93O83XfoVYbSY9PhN3xvtOLV9Id")
+                .queryParam("api_key", apiKey)
                 .queryParam("country", "IN")
                 .queryParam("year", year)
                 .build())

@@ -6,10 +6,8 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class UserDTO {
-    private String email;
+public class UserUpdateRequestDTO {
     private String name;
-    private Long id;
-    private Gender gender;
     private LocalDate dateOfBirth;
+    private Gender gender;
 }

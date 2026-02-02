@@ -12,6 +12,7 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceN
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.HotelMinPriceRepository;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.InventoryRepositories;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories.RoomRepositories;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -115,7 +116,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         }
 
-        List<Inventory> inventories = inventoryRepo.findByRoomOrderedByDateDesc(room);
+        List<Inventory> inventories = inventoryRepo.findByRoomOrderByDateDesc(room);
 
         return inventories
                 .stream()
@@ -124,6 +125,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    @Transactional
     public void UpdateInventoryByRoom(Long id, InventoryUpdateRequestDTO updateRequestDTO) {
         log.info("Updating the inventories for the room with id {} between dates {} to {}",id,updateRequestDTO.getStartDate(),updateRequestDTO.getEndDate());
         RoomEntity room =roomRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("Room not found with id:"+id));

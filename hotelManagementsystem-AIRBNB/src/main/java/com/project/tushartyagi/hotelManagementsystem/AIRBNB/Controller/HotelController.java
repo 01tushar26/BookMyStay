@@ -63,6 +63,7 @@ public class HotelController {
          hotelService.deleteHotelById(id);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/{hotelId}/bookings")
     public ResponseEntity<List<BookingDTO>> getAllTheBookingOfParticularHotel(@PathVariable (name = "hotelId") Long id){
 
