@@ -27,12 +27,12 @@ public class HotelEntity {
     private String city;
 
 
-// these are supported by other db than postgress
-    @Column(columnDefinition = "TEXT[]")
-    private String[] photos;
-
-    @Column(columnDefinition = "TEXT[]")
-    private String[] amenities;
+// these are not supported by other db than postgress
+//    @Column(columnDefinition = "TEXT[]")
+//    private String[] photos;
+//
+//    @Column(columnDefinition = "TEXT[]")
+//    private String[] amenities;
 
     @CreationTimestamp
     @Column(updatable = false)

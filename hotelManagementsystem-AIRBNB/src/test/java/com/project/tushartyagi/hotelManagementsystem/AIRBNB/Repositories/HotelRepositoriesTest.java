@@ -4,6 +4,8 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.Gender;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.HotelEntity;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.User;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.TestcontainerConfigurations;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -36,6 +39,11 @@ class HotelRepositoriesTest {
     private HotelEntity hotel ;
     private User user;
 
+
+    @BeforeAll
+    static void setTimezone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata"));
+    }
 
     @BeforeEach
     void setup(){
@@ -64,10 +72,9 @@ class HotelRepositoriesTest {
     }
     @Test
     void TestExistsByName_WhenNameIsNotPresent_returnFalse() {
-        userRepo.save(user);
-        hotelRepo.save(hotel);
+        String name = "taj";
 
-        Boolean b= hotelRepo.existsByName(hotel.getName());
+        Boolean b= hotelRepo.existsByName(name);
          assertThat(b).isNotNull();
          assertThat(b).isFalse();
 
@@ -88,11 +95,11 @@ class HotelRepositoriesTest {
     @Test
     void testFindByOwner_WhenOwnerIsNotPresent_returnNull() {
         userRepo.save(user);
-        hotelRepo.save(hotel);
 
         List<HotelEntity> h= hotelRepo.findByOwner(user);
 
-        assertThat(h).isNull();
+
+        Assertions.assertThat(h).isNotNull().isEmpty();
 
     }
 }
