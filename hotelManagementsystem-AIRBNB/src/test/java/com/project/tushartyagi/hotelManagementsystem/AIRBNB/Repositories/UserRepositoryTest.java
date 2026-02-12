@@ -2,23 +2,27 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Repositories;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.Enums.Gender;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity.User;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.TestcontainerConfigurations;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
+import org.springframework.context.annotation.Import;
+import org.testcontainers.utility.TestcontainersConfiguration;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 @DataJpaTest
+@Import(TestcontainerConfigurations.class)
+//this is remove the securtity authenrication part from the test
 @ImportAutoConfiguration(exclude = SecurityAutoConfiguration.class)
+@EntityScan(basePackages = "com.project.tushartyagi.hotelManagementsystem.AIRBNB.Entity")
 class UserRepositoryTest {
 
     @Autowired

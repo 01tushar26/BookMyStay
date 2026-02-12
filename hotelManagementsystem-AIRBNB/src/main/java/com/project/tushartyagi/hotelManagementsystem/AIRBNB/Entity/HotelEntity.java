@@ -26,6 +26,8 @@ public class HotelEntity {
 
     private String city;
 
+
+// these are supported by other db than postgress
     @Column(columnDefinition = "TEXT[]")
     private String[] photos;
 
