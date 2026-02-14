@@ -20,10 +20,10 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+
 @ExtendWith(MockitoExtension.class)
-@Import(TestcontainerConfigurations.class)
-@ImportAutoConfiguration(exclude = SecurityAutoConfiguration.class)
+
+
 
 class UserServiceImplTest {
 
@@ -54,14 +54,12 @@ class UserServiceImplTest {
 
     }
     @Test
-    void TestGetUserById_WhenUserIsNotPresent_ReturnNull() {
+    void TestGetUserById_WhenUserIsNotPresent_ThrowException() {
 
         //assign the mock
         Long id =1L;
         when(userRepository.findById(id)).thenReturn(Optional.empty());
-        //act
-
-        //then
+        //act  and then
         Assertions.assertThatThrownBy(()->userService.getUserById(1L))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("user is not found with that id : "+id);
