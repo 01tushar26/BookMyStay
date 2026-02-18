@@ -9,13 +9,14 @@ phases:
   build:
     commands:
       - echo Building, Testing and packaging the application...
+      - cd hotelManagementsystem-AIRBNB
       - mvn package -DskipTests
   post_build:
     commands:
       - echo Build, Testing and packaging completed.
 artifacts:
   files:
-    - target/*.jar
+    - hotelManagementsystem-AIRBNB/target/*.jar
   discard-paths: yes
 cache:
   paths:
