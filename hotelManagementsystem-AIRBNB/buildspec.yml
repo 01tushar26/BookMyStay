@@ -8,7 +8,7 @@ phases:
       - echo Installing Maven...
   build:
     commands:
-      - echo Building, Testing and packaging the application...
+      - echo Building, Testing and packaging
       - cd hotelManagementsystem-AIRBNB
       - mvn package -DskipTests
   post_build:
