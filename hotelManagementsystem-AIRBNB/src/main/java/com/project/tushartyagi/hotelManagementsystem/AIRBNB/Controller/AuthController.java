@@ -5,6 +5,7 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.LoginResponseDTO
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.SignUpRequestDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.UserDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Security.AuthService;
+import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.RateLimiter.LoginRateLimiterService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,14 +25,23 @@ import java.util.Arrays;
 public class AuthController {
 
     private final AuthService authService;
+    private final LoginRateLimiterService loginRateLimiterService;
 
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO){
         UserDTO userDTO = authService.signupUser(signUpRequestDTO);
         return ResponseEntity.ok(userDTO);
     }
+
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> logIn(@RequestBody LoginDTO loginDTO, HttpServletResponse httpServletResponse){
+    public ResponseEntity<LoginResponseDTO> logIn(@RequestBody LoginDTO loginDTO, HttpServletResponse httpServletResponse ,HttpServletRequest httpServletRequest){
+        String ip = httpServletRequest.getRemoteAddr();
+        if(!loginRateLimiterService.allowRequest(ip)){
+            return ResponseEntity
+                    .status(429)
+                    .body(new LoginResponseDTO("Too many login attempts. Try later."));
+        }
+
         String[] arr= authService.loginUser(loginDTO);
         Cookie cookie = new Cookie("refreshToken",arr[1]);
         httpServletResponse.addCookie(cookie);
