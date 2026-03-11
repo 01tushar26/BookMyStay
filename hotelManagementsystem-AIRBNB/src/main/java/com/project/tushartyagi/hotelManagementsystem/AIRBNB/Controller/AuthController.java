@@ -35,7 +35,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> logIn(@RequestBody LoginDTO loginDTO, HttpServletResponse httpServletResponse ,HttpServletRequest httpServletRequest){
+        // this is to get the ip from the request
         String ip = httpServletRequest.getRemoteAddr();
+        //check the limit
         if(!loginRateLimiterService.allowRequest(ip)){
             return ResponseEntity
                     .status(429)

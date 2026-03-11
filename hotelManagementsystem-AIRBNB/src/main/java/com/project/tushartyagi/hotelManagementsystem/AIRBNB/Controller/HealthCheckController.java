@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-//todo- this controller give error thats th reason it does not show in your aws dashboards
+//todo- this controller give error that's the reason it does not show in your aws dashboards
 @RestController
 @Profile("prod")
 public class HealthCheckController {
