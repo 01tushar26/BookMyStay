@@ -6,6 +6,7 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.SignUpRequestDTO
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.UserDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Security.AuthService;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.RateLimiter.LoginRateLimiterService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,6 +22,10 @@ import java.util.Arrays;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(
+        name = "Authentication APIs",
+        description = "Handles user authentication, JWT access tokens, user registration, login, token refresh."
+)
 @RequiredArgsConstructor
 public class AuthController {
 

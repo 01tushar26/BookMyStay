@@ -6,6 +6,8 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelReportDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Exceptions.ResourceNotFoundException;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.BookingService;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.HotelService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+@Tag(
+        name = "Hotel Management APIs",
+        description = "Administrative APIs for hotel creation, updates, activation, booking management, and hotel performance reporting."
+)
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/admin/hotels")
 @Slf4j
 @RequiredArgsConstructor

@@ -14,6 +14,8 @@ public class Swaggerconfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
+
+
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()
@@ -21,7 +23,8 @@ public class Swaggerconfig {
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
                         )
-                )
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
+                );
+        //instead of making the all api locked use @SecurityRequirement(name = "bearerAuth") before controller
+//                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     }
 }

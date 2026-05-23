@@ -5,6 +5,8 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.BookingDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.BookingRequest;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.GuestDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.BookingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+@Tag(
+        name = "Booking APIs",
+        description = "APIs for hotel room booking, guest management, payment initiation, and booking cancellation operations."
+)
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
 public class HotelBookingController {

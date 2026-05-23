@@ -4,14 +4,21 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.BookingDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.UserDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.UserUpdateRequestDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(
+        name = "User APIs",
+        description = "APIs for managing user profiles, account information, and personal booking history."
+)
 @RestController
 @RequestMapping("/users")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class UserController {
 

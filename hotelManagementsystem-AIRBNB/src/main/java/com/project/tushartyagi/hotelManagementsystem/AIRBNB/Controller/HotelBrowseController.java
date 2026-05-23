@@ -6,11 +6,16 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelPricingDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.HotelSearchRequest;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.HotelService;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.InventoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(
+        name = "Hotel Browse APIs",
+        description = "APIs for searching hotels, checking pricing availability, and retrieving detailed hotel information."
+)
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/hotels")

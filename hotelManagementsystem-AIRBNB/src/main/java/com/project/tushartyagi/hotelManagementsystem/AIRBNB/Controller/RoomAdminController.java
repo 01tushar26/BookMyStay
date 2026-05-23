@@ -2,6 +2,8 @@ package com.project.tushartyagi.hotelManagementsystem.AIRBNB.Controller;
 
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.DTO.RoomDTO;
 import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.RoomService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(
+        name = "Room Management APIs",
+        description = "Administrative APIs for creating, updating, retrieving, and deleting hotel room information."
+)
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/hotels/{hotelId}/rooms")
 public class RoomAdminController {

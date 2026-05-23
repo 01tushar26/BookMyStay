@@ -5,6 +5,7 @@ import com.project.tushartyagi.hotelManagementsystem.AIRBNB.Services.BookingServ
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.SignatureException;
 
+@Tag(
+        name = "Webhook APIs",
+        description = "Webhook endpoints for handling external payment gateway events and asynchronous booking payment updates."
+)
 @RestController
 @RequestMapping(path ="/webhooks")
 @RequiredArgsConstructor
