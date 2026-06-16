@@ -16,6 +16,6 @@
 
 
 FROM eclipse-temurin:21-jdk-alpine
-ADD target/hotelManagementsystem-AIRBNB-0.0.1-SNAPSHOT.jar bookMyStay.jar
+ADD target/server-0.0.1-SNAPSHOT.jar bookMyStay.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "bookMyStay.jar"]
