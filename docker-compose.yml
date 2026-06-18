@@ -3,11 +3,11 @@ version: "3.9"
 services:
 
   server:
-    image: bookmystay:prod
+    image: bookmystay:latest
     container_name: bookmystay-server
     restart: unless-stopped
     env_file:
-      - prod.env
+      - server/prod.env
     ports:
       - "8080:8080"
 
