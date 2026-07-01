@@ -7,7 +7,7 @@ services:
     container_name: bookmystay-server
     restart: unless-stopped
     env_file:
-      - server/prod.env
+      - server/dev.env
     ports:
       - "8080:8080"
 
