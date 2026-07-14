@@ -1,8 +1,8 @@
-# BookMyStay — Hotel Management & Booking Platform
+# BookMyStay
 
 A production-ready hotel management and booking backend built with Spring Boot. Covers the full guest journey — hotel discovery, room search, booking, payment, and cancellation — with dynamic pricing, JWT auth, Stripe payments, and rate limiting.
 
-**Live Demo:** http://bookmystay.tushardev.me/api/v1/swagger-ui.html
+**Live Demo:** [bookmystay.tushardev.me](http://bookmystay.tushardev.me/api/v1/swagger-ui.html)
 
 ---
 
@@ -108,7 +108,7 @@ docker compose -f docker-compose.yml up
 
 ## CI/CD
 
-Every push to `main` that touches `server/**` runs `.github/workflows/ci-cd.yml`.
+Every push to `main` that touches `server/**` & `.github/workflows/ci-cd.yml` runs `.github/workflows/ci-cd.yml`.
 
 <p align="center">
   <img src="assets/cicd.png" alt="Learnify Architecture" width="1772"/>
