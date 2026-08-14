@@ -8,16 +8,8 @@ services:
     restart: unless-stopped
     env_file:
       - prod.env
-    expose:
-      - 8080
-
-  nginx:
-    image: nginx:alpine
     ports:
-      - "80:80"
-    volumes:
-       - ./nginx.conf:/etc/nginx/conf.d/default.conf  #replace default.conf with nginx.conf on production root
+      - "8081:8080"
 
-    depends_on:
-      - server
+
 
