@@ -4,6 +4,10 @@ A production-ready hotel management and booking backend built with Spring Boot. 
 
 **Live Demo:** [bookmystay.tushardev.me](http://bookmystay.tushardev.me/api/v1/swagger-ui.html)
 
+<p align="center">
+  <img src="assets/BookMyStay_intro.gif" alt="BookMyStay intro" width="800"/>
+</p>
+
 ---
 
 
